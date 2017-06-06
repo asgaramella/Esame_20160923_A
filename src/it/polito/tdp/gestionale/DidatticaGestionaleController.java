@@ -3,6 +3,7 @@ package it.polito.tdp.gestionale;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.gestionale.model.Corso;
 import it.polito.tdp.gestionale.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,13 +29,23 @@ public class DidatticaGestionaleController {
 	@FXML
 	void doCorsiFrequentati(ActionEvent event) {
 		txtResult.clear();
-		txtResult.setText("premuto Corsi Frequentati");
+		int counter=0;
+			for(Integer i:model.getStatCorsi()){
+				txtResult.appendText("Nr di studenti frequentanti "+Integer.toString(counter)+" corsi: "+Integer.toString(i)+"\n");
+				counter++;
+			}
+		
 	}
 	
 	@FXML
 	void doVisualizzaCorsi(ActionEvent event) {
 		txtResult.clear();
-		txtResult.setText("premuto Visualizza Corsi");
+		txtResult.appendText("Nr di interventi da eseguire "+Integer.toString(model.trovaSequenza().size())+"nei corsi di:\n");
+		for(Corso ctemp: model.trovaSequenza()){
+			txtResult.appendText(ctemp.toString()+"\n");
+		}
+		
+		
 	}
 
 	@FXML
