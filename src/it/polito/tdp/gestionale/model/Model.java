@@ -2,6 +2,7 @@ package it.polito.tdp.gestionale.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -107,48 +108,49 @@ public class Model {
 	public List<Corso> trovaSequenza(){
 		List<Corso> parziale=new ArrayList<Corso>();
 		List<Corso> best=new ArrayList<Corso>();
-		boolean first=true;
 		
-		scegli(parziale,0,best,first);
 		
-		return best;
+		//CONDIZIONE DI TERMINAZIONE: QUANDO HO ESPLORATO TUTTE LE POSSIBILI SOLUZIONI
+		scegli(0,parziale,best);
+		
+		return best; 
 		
 		
 	}
 
-	private void scegli(List<Corso> parziale, int livello, List<Corso> best,boolean first) {
-		System.out.println(this.getFrequentanti().size());
+	private void scegli(int livello,List<Corso> parziale, List<Corso> best) {
+		System.out.println(parziale);
 		
+		HashSet<Nodo> hashSetStudenti=new HashSet<Nodo>(this.getFrequentanti());
+		for(Corso ctemp: parziale){
+			hashSetStudenti.removeAll(ctemp.getStudenti());
+		}	
 		
-		if(this.getFrequentanti().size()==0){
-			if(first){
+		if(hashSetStudenti.isEmpty()){
+			if(best.isEmpty()){
 				best.addAll(parziale);
-				first=false;
 			}
-			else{
+			else
+			{
 				if(parziale.size()<best.size()){
-				best.clear();
-				best.addAll(parziale);
-			}
-			}
-			return;
-			
-		}else{
-			for(Corso ctemp:this.getAllCorsi()){
-				if(!parziale.contains(ctemp)){
-					
-					parziale.add(ctemp);
-					this.getFrequentanti().removeAll(Graphs.neighborListOf(this.getGraph(),ctemp));
-					
-					scegli(parziale, livello+1,best,first);
-					
-					parziale.remove(ctemp);
-					this.getFrequentanti().addAll(Graphs.neighborListOf(this.getGraph(), ctemp));
-					
-					
-					
+					best.clear();
+					best.addAll(parziale);
 				}
 			}
+		}
+		
+		
+		for(Corso ctemp:this.getAllCorsi()){
+				if(parziale.isEmpty() || ctemp.compareTo(parziale.get(parziale.size()-1))>0){
+					
+					parziale.add(ctemp);
+					
+					scegli(livello+1,parziale,best);
+					
+					parziale.remove(ctemp);
+				
+			}
+			
 		}
 		
 	}
